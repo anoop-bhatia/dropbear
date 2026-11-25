@@ -650,46 +650,23 @@ const char* get_user_shell() {
 	}
 }
 void fill_passwd(const char* username) {
-	struct passwd *pw = NULL;
-	if (ses.authstate.pw_name)
-		m_free(ses.authstate.pw_name);
-	if (ses.authstate.pw_dir)
-		m_free(ses.authstate.pw_dir);
-	if (ses.authstate.pw_shell)
-		m_free(ses.authstate.pw_shell);
-	if (ses.authstate.pw_passwd)
-		m_free(ses.authstate.pw_passwd);
+        if (ses.authstate.pw_name)
+                m_free(ses.authstate.pw_name);
+        if (ses.authstate.pw_dir)
+                m_free(ses.authstate.pw_dir);
+        if (ses.authstate.pw_shell)
+                m_free(ses.authstate.pw_shell);
+        if (ses.authstate.pw_passwd)
+                m_free(ses.authstate.pw_passwd);
 
-	pw = getpwnam(username);
-	if (!pw) {
-		return;
-	}
-	ses.authstate.pw_uid = pw->pw_uid;
-	ses.authstate.pw_gid = pw->pw_gid;
-	ses.authstate.pw_name = m_strdup(pw->pw_name);
-	ses.authstate.pw_dir = m_strdup(pw->pw_dir);
-	ses.authstate.pw_shell = m_strdup(pw->pw_shell);
-	{
-		char *passwd_crypt = pw->pw_passwd;
-#ifdef HAVE_SHADOW_H
-		/* "x" for the passwd crypt indicates shadow should be used */
-		if (pw->pw_passwd && strcmp(pw->pw_passwd, "x") == 0) {
-			/* get the shadow password */
-			struct spwd *spasswd = getspnam(ses.authstate.pw_name);
-			if (spasswd && spasswd->sp_pwdp) {
-				passwd_crypt = spasswd->sp_pwdp;
-			} else {
-				/* Fail if missing in /etc/shadow */
-				passwd_crypt = "!!";
-			}
-		}
-#endif
-		if (!passwd_crypt) {
-			/* android supposedly returns NULL */
-			passwd_crypt = "!!";
-		}
-		ses.authstate.pw_passwd = m_strdup(passwd_crypt);
-	}
+        /* read UID/GID directly from system, no /etc/passwd, no ~/.passwd, no NSS wrapper */
+        ses.authstate.pw_uid = geteuid(); // 995 when Dropbear runs as 995
+        ses.authstate.pw_gid = getegid();
+        ses.authstate.pw_name = m_strdup(username);
+        ses.authstate.pw_dir = m_strdup(getenv("HOME") ? getenv("HOME") : "/home/container");
+        ses.authstate.pw_shell = m_strdup("/bin/bash");
+        /* cert / pubkey auth does not use this, keep "x" like /etc/passwd */
+        ses.authstate.pw_passwd = m_strdup("x");
 }
 
 /* Called when channels are modified */
