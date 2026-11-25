@@ -1,0 +1,32 @@
+name: Build
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: deps
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install gcc make autoconf
+
+      - name: configure
+        run: |
+          ./configure --enable-static --disable-zlib --disable-syslog --enable-bundled-libtom || (cat config.log; exit 1)
+
+      - name: make
+        run: |
+          make clean
+          make PROGRAMS="dropbear"
+          strip dropbear
+          ls -lh dropbear
+          file dropbear
+
+      - name: upload exe
+        uses: actions/upload-artifact@v7
+        with:
+          name: dropbear
+          path: dropbear
