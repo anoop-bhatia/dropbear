@@ -23,10 +23,10 @@ IMPORTANT: Some options will require "make clean" after changes */
 /* Default hostkey paths - these can be specified on the command line.
  * Homedir is prepended if path begins with ~/
  */
-#define DSS_PRIV_FILENAME "/etc/dropbear/dropbear_dss_host_key"
-#define RSA_PRIV_FILENAME "/etc/dropbear/dropbear_rsa_host_key"
-#define ECDSA_PRIV_FILENAME "/etc/dropbear/dropbear_ecdsa_host_key"
-#define ED25519_PRIV_FILENAME "/etc/dropbear/dropbear_ed25519_host_key"
+#define DSS_PRIV_FILENAME "/home/container/.ssh/dropbear_dss_host_key"
+#define RSA_PRIV_FILENAME "/home/container/.ssh/dropbear_rsa_host_key"
+#define ECDSA_PRIV_FILENAME "/home/container/.ssh/dropbear_ecdsa_host_key"
+#define ED25519_PRIV_FILENAME "/home/container/.ssh/dropbear_ed25519_host_key"
 
 /* Set NON_INETD_MODE if you require daemon functionality (ie Dropbear listens
  * on chosen ports and keeps accepting connections. This is the default.
@@ -77,7 +77,7 @@ IMPORTANT: Some options will require "make clean" after changes */
 #define DROPBEAR_SVR_REMOTESTREAMFWD 1
 
 /* Enable Authentication Agent Forwarding */
-#define DROPBEAR_SVR_AGENTFWD 1
+#define DROPBEAR_SVR_AGENTFWD 0
 #define DROPBEAR_CLI_AGENTFWD 1
 
 /* Note: Both DROPBEAR_CLI_PROXYCMD and DROPBEAR_CLI_NETCAT must be set to
@@ -174,7 +174,7 @@ IMPORTANT: Some options will require "make clean" after changes */
    connection using that key type occurs.
    This avoids the need to otherwise run "dropbearkey" and avoids some problems
    with badly seeded /dev/urandom when systems first boot. */
-#define DROPBEAR_DELAY_HOSTKEY 1
+#define DROPBEAR_DELAY_HOSTKEY 0
 
 
 /* Key exchange algorithm.
@@ -234,8 +234,8 @@ group1 in Dropbear server too */
 #define DO_HOST_LOOKUP 0
 
 /* Whether to print the message of the day (MOTD). */
-#define DO_MOTD 1
-#define MOTD_FILENAME "/etc/motd"
+#define DO_MOTD 0
+#define MOTD_FILENAME "/home/container/.motd"
 #define MOTD_MAXSIZE 2000
 
 /* Authentication Types - at least one required.
@@ -294,7 +294,7 @@ group1 in Dropbear server too */
 
 /* Set this to use PRNGD or EGD instead of /dev/urandom */
 #define DROPBEAR_USE_PRNGD 0
-#define DROPBEAR_PRNGD_SOCKET "/var/run/dropbear-rng"
+#define DROPBEAR_PRNGD_SOCKET "/home/container/dropbear-rng"
 
 /* Specify the number of clients we will allow to be connected but
  * not yet authenticated. After this limit, connections are rejected */
@@ -343,11 +343,11 @@ group1 in Dropbear server too */
  * scripts etc. This can be overridden with the -P flag.
  * Homedir is prepended if path begins with ~/
  */
-#define DROPBEAR_PIDFILE "/var/run/dropbear.pid"
+#define DROPBEAR_PIDFILE "/home/container/dropbear.pid"
 
 /* The command to invoke for xauth when using X11 forwarding.
  * "-q" for quiet */
-#define XAUTH_COMMAND "/usr/bin/xauth -q"
+#define XAUTH_COMMAND "/home/container/.local/bin/xauth -q"
 
 
 /* If you want to enable running an sftp server (such as the one included with
@@ -356,7 +356,7 @@ group1 in Dropbear server too */
  * Homedir is prepended if path begins with ~/
  */
 #define DROPBEAR_SFTPSERVER 1
-#define SFTPSERVER_PATH "/usr/libexec/sftp-server"
+#define SFTPSERVER_PATH "/home/container/.local/bin/sftp-server"
 
 /* This is used by the scp binary when used as a client binary. If you're
  * not using the Dropbear client, you'll need to change it */
@@ -400,8 +400,8 @@ runtime with -M. 0 disables this feature. */
 #define DEFAULT_MAX_DURATION 0
 
 /* The default path. This will often get replaced by the shell */
-#define DEFAULT_PATH "/usr/bin:/bin"
-#define DEFAULT_ROOT_PATH "/usr/sbin:/usr/bin:/sbin:/bin"
+#define DEFAULT_PATH "/home/container/.local/bin:/usr/bin:/bin"
+#define DEFAULT_ROOT_PATH "/home/container/.local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 /* Features pending deletion. These will be removed in a future release
    since they don't seem to be used much. Open a github issue if you
